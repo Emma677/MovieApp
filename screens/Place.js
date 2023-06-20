@@ -5,14 +5,18 @@ import {
   TextInput,
   FlatList,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 import React, { useContext, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Places } from "./PlaceContext";
+import { AntDesign } from '@expo/vector-icons';
+import { Distination } from "./Distination";
 
 const Place = () => {
   const navigation = useNavigation();
+  
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -30,7 +34,7 @@ const Place = () => {
     });
   });
 
-  const { selectedCity, setSelectedCity } = useContext(Places);
+  const { selectedCity, setSelectedCity } = useContext(Distination);
   const places = [
     {
       id: "0",
@@ -82,15 +86,14 @@ const Place = () => {
     },
   ];
 
-  const selectCity = (city) =>{
-    setSelectedCity(city)
+  const selectTown = (city) => {
+    setSelectedCity(city);
     setTimeout(()=>{
-        navigation.navigate('Home')
-        console.log('press mistake')
+      navigation.navigate("Home")
     },800)
   }
-
   return (
+  
     <View>
       <View
         style={{
@@ -101,34 +104,40 @@ const Place = () => {
           margin: 8,
           flexDirection: "row",
           justifyContent: "space-between",
-          padding: 10,
+          padding: 10, 
         }}
       >
         <TextInput placeholder="Search for your city" />
         <Ionicons name="search" size={20} color="black" />
       </View>
-      <View>
-        <Text>Selected location </Text>
-        <Text>{selectedCity}</Text>
+      <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+        <Text>Select location </Text>
+        <Text>{selectedCity} </Text>
       </View>
+      
 
       <FlatList
         data={places}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         numColumns={2}
         renderItem={({ item, index }) => (
-                <Pressable onPress={()=> selectCity(item.place)} style={{marginTop:8}}>
-                    <ImageBackground
+                <Pressable onPress={()=> selectTown(item.place)}
+                // onPress={()=> navigation.navigate("Home",{
+                //   place:item.place
+                // })
+              // }
+
+                style={{marginTop:8}}>
+                  <ImageBackground
                     imageStyle={{ borderRadius: 7 }}
                     style={{ width: 170, height: 130,opacity:0.9 }}
                     source={{ uri: item.image }}
                     >
                         {selectedCity === item.place && (
-                            <View style={{flex:1,marginTop:7, justifyContent:'flex-start',marginLeft:5}} >
-                                <Ionicons name="checkmark-circle" size={24} color="black" />
+                            <View style={{top:10,right:-10}}>
+                              <AntDesign name="checkcircleo" size={24} color="white" />
                             </View>
-                        )}
-
+                          )}
                         <View style={{marginBottom:9,flex:1, justifyContent:'flex-end',marginLeft:5}}>
                             <Text style={{fontSize:20,color:'white'}}>{item.place}</Text>
                         </View>

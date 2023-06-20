@@ -1,12 +1,14 @@
 import { StyleSheet } from "react-native";
 import BottNav from "./navigations/Navigations";
-import { PlaceContext } from "./screens/PlaceContext";
+import { DistinationContext } from "./screens/Distination";
+import { ModalPortal} from "react-native-modals";
 
 export default function App() {
   return (
-    <PlaceContext>
+    <DistinationContext>
       <BottNav />
-    </PlaceContext>
+      <ModalPortal/>
+    </DistinationContext>
   );
 }
 

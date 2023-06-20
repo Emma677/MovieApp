@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from "@react-navigation/native";
 import Place from "../screens/Place";
+import MovieScreen from "../screens/MovieScreen";
 
 const HomeStack = createNativeStackNavigator()
 const ProfileStack = createNativeStackNavigator()
@@ -15,6 +16,7 @@ const HomeStackScreen = () => {
         <HomeStack.Navigator>
             <HomeStack.Screen name="Home" component={Home} options={{title:''}}/>
             <HomeStack.Screen name="Place" component={Place} />
+            <HomeStack.Screen name="MovieScreen" component={MovieScreen} />
         </HomeStack.Navigator>
     )
 }
