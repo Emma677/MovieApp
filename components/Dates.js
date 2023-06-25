@@ -10,8 +10,8 @@ const Dates = ({date,selected,onSelected}) => {
     const fullDate = moment(date).format("YYYY-MM-DD");
     console.log(fullDate)
   return (
-    <Pressable onPress={() => onSelected}
-      style={[styles.container,{}]}>
+    <Pressable onPress={() => onSelected(fullDate)}
+      style={[styles.container, selected === fullDate && {backgroundColor:'#FFD700'}]}>
         <Text>{day}</Text>
 
         {/* the view below gives a space like a magrin between the two texts*/}

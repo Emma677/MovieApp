@@ -358,7 +358,7 @@ const Home = () => {
   // before using the selectedcity from the Distination.js file i use the route to pass param from the place to this home screen
   // const route = useRoute();
   // const {place} = route.params || {}
-  console.log("place", selectedCity);
+  // console.log("place", selectedCity);
 
   
   const languages = [
