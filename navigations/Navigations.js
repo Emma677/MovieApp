@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from "@react-navigation/native";
 import Place from "../screens/Place";
 import MovieScreen from "../screens/MovieScreen";
+import TheatreScreen from "../screens/TheatreScreen";
 
 const HomeStack = createNativeStackNavigator()
 const ProfileStack = createNativeStackNavigator()
@@ -17,6 +18,8 @@ const HomeStackScreen = () => {
             <HomeStack.Screen name="Home" component={Home} options={{title:''}}/>
             <HomeStack.Screen name="Place" component={Place} />
             <HomeStack.Screen name="MovieScreen" component={MovieScreen} />
+            <HomeStack.Screen name="Theatre" component={TheatreScreen} />
+
         </HomeStack.Navigator>
     )
 }

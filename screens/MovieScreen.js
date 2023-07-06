@@ -721,6 +721,10 @@ const MovieScreen = () => {
                   data={multiplex.showtimes}
                   renderItem={({ item }) => (
                     <Pressable
+                      onPress={()=> navigation.navigate('Theatre',{
+                       name:route.params.title,
+                       selectedDate:selectedDate
+                      })}
                       style={{
                         flexDirection: "row",
                         borderWidth: 1,

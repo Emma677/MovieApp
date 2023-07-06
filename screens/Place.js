@@ -121,7 +121,7 @@ const Place = () => {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         numColumns={2}
         renderItem={({ item, index }) => (
-                <Pressable onPress={()=> selectTown(item.place)}
+                <Pressable key={index} onPress={()=> selectTown(item.place)}
                 // onPress={()=> navigation.navigate("Home",{
                 //   place:item.place
                 // })
