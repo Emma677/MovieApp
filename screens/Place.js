@@ -7,11 +7,12 @@ import {
   ImageBackground,
   ScrollView,
 } from "react-native";
-import React, { useContext, useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 import { Distination } from "./Distination";
+import { client } from "../moviebooking/sanity";
 
 const Place = () => {
   const navigation = useNavigation();
@@ -34,7 +35,7 @@ const Place = () => {
     });
   });
 
-  const { selectedCity, setSelectedCity } = useContext(Distination);
+  const { selectedCity, setSelectedCity,setLocationId } = useContext(Distination);
   const places = [
     {
       id: "0",
@@ -85,13 +86,29 @@ const Place = () => {
         "https://images.pexels.com/photos/15351642/pexels-photo-15351642.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
   ];
+  // the places array above was used for the frontend ui.
+  const [cities, setCities] = useState([])
 
-  const selectTown = (city) => {
+  useEffect(()=>{
+    const fetchData = async()=>{
+      const result = await client.fetch(
+        `*[_type == 'location']`
+      )
+      setCities(result)
+    }
+    fetchData()
+  },[])
+
+  // console.log(cities)
+
+  const selectTown = (city,locationId) => {
     setSelectedCity(city);
+    setLocationId(locationId)
     setTimeout(()=>{
       navigation.navigate("Home")
     },800)
   }
+  // the city param passed in the selectTown is different from the city in the sanity.
   return (
   
     <View>
@@ -117,15 +134,12 @@ const Place = () => {
       
 
       <FlatList
-        data={places}
+        data={cities}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         numColumns={2}
         renderItem={({ item, index }) => (
-                <Pressable key={index} onPress={()=> selectTown(item.place)}
-                // onPress={()=> navigation.navigate("Home",{
-                //   place:item.place
-                // })
-              // }
+                <Pressable key={index} onPress={()=> selectTown(item.city,item._id)}
+                // initially it was selectTown(item.place) but in our sanity it is place so we modify it
 
                 style={{marginTop:8}}>
                   <ImageBackground
@@ -133,13 +147,13 @@ const Place = () => {
                     style={{ width: 170, height: 130,opacity:0.9 }}
                     source={{ uri: item.image }}
                     >
-                        {selectedCity === item.place && (
+                        {selectedCity === item.city && (
                             <View style={{top:10,right:-10}}>
                               <AntDesign name="checkcircleo" size={24} color="white" />
                             </View>
                           )}
                         <View style={{marginBottom:9,flex:1, justifyContent:'flex-end',marginLeft:5}}>
-                            <Text style={{fontSize:20,color:'white'}}>{item.place}</Text>
+                            <Text style={{fontSize:20,color:'white'}}>{item.city}</Text>
                         </View>
 
                     </ImageBackground>

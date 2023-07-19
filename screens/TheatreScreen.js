@@ -82,7 +82,6 @@ const TheatreScreen = () => {
       (selectedSeat) => selectedSeat.row === row && selectedSeat.seat === seat
     );
     // the isSelected checks whether a particular seat has  been selected.
-
     if (isSelected) {
       setSelectedSeat((prevState) =>
         prevState.filter(
@@ -96,65 +95,86 @@ const TheatreScreen = () => {
     // the if block unchecks a seat that has been selected.
     // so if a seat has been selected and you press the same same seat again if trigerr the if statement
     // the else block check if a seat has been selected.
-    console.log("row", row);
-    console.log("seat", seat);
+
+    // console.log("row", row);
+    // console.log("seat", seat);
   };
 
+  // console.log(route.params)
+
   const pay = () => {
-    const updatedRows = [...rows];
-    selectedSeat.forEach((seat) => {
-      const rowIndex = updatedRows.findIndex((row) => row.row === seat.row);
-      console.log("rowIndex", rowIndex);
-      const seatIndex = updatedRows[rowIndex].seats.findIndex(
-        (s) => s.seat === seat.seat
-      );
-      console.log("seatIndex", seatIndex);
-      updatedRows[rowIndex].seats[seatIndex].bookingStatus === "disabled";
-    });
-    setRows(updatedRows);
-    setSelectedSeat([]);
+    // const updatedRows = [...rows];
+    // selectedSeat.forEach((seat) => {
+    //   const rowIndex = updatedRows.findIndex((row) => row.row === seat.row);
+    //   console.log("rowIndex", rowIndex);
+    //   const seatIndex = updatedRows[rowIndex].seats.findIndex(
+    //     (s) => s.seat === seat.seat
+    //   );
+    //   console.log("seatIndex", seatIndex);
+    //   updatedRows[rowIndex].seats[seatIndex].bookingStatus = "disabled";
+    // });
+    // setRows(updatedRows);
+    // setSelectedSeat([]);
+
+    navigation.navigate("Food",{
+      mall:route.params.mall,
+      seats: result,
+      docId: route.params.docId,
+      selectedSeat:selectedSeat,
+      showtime:route.params.showtime,
+      rows:route.params.rows,
+      name:route.params.name,
+      selectedDate: route.params.selectedDate
+    })
   };
   // the pay function checks the row and seat index selected.
   // the stylings can be add to it toblock and prevent any one from selecting that seat
 
-  const renderSeats = () =>
-    rows.map((row, rowIndex) => (
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: 10,
-          left: 5,
-        }}
-        key={rowIndex}
-      >
-        <View>
-          <Text>{row.row}</Text>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: "row" }}>
-            {row.seats.map((seat, seatIndex) => (
-              <Pressable
-                onPress={() => handleSeatPress(row.row, seat.seat)}
-                style={[
-                  styles.seat,
-                  selectedSeat.some(
-                    (selectedSeat) =>
-                      selectedSeat.row === row.row &&
-                      selectedSeat.seat === seat.seat
-                  ) && styles.seatSelected,
-                  seat.bookingStatus === "disabled" && styles.bookedSeat
-                ]}
-                disabled = {seat.bookingStatus === "disabled"}
-                key={seatIndex}
-              >
-                <Text>{seat.seat}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-    ));
+const seatNumbers = selectedSeat.map((seat) => seat.row + seat.seat)
+const result = seatNumbers.join(" ")
+
+  const renderSeats = () => {
+   return route.params.rows.map((row, rowIndex) => (
+       <View
+         style={{
+           flexDirection: "row",
+           alignItems: "center",
+           marginBottom: 10,
+           left: 5,
+         }}
+         key={rowIndex}
+       >
+         <View>
+           <Text>{row.row}</Text>
+         </View>
+         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+           <View style={{ flexDirection: "row" }}>
+             {row.seats.map((seat, seatIndex) => (
+               <Pressable
+                 onPress={() => handleSeatPress(row.row, seat.number)}
+                //  for the ui its seat.seat but for the backend its seat.number
+                 style={[
+                   styles.seat,
+                   selectedSeat.some(
+                     (selectedSeat) =>
+                       selectedSeat.row === row.row &&
+                       selectedSeat.seat === seat.number
+                   ) && styles.seatSelected,
+                   seat.bookingStatus === "disabled" && styles.bookedSeat
+                 ]}
+                 disabled = {seat.bookingStatus === "disabled"}
+                 key={seatIndex}
+               >
+                 <Text>{seat.number}</Text>
+                 {/* <Text>{seat.number}</Text> for the ui its seat.seat */}
+                
+               </Pressable>
+             ))}
+           </View>
+         </ScrollView>
+       </View>
+     ));
+  }
 
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -230,6 +250,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderWidth: 1,
     borderColor: "gray",
+    borderRadius:5,
     padding: 10,
   },
   seatSelected: {
@@ -237,8 +258,9 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   bookedSeat:{
-    backgroundColor:"black",
-    borderColor:'transparent'
+    backgroundColor:"#989898",
+    borderColor:'transparent',
+    
   }
 });
 

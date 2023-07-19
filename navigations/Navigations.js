@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Place from "../screens/Place";
 import MovieScreen from "../screens/MovieScreen";
 import TheatreScreen from "../screens/TheatreScreen";
+import Food from "../screens/Food";
 
 const HomeStack = createNativeStackNavigator()
 const ProfileStack = createNativeStackNavigator()
@@ -19,6 +20,7 @@ const HomeStackScreen = () => {
             <HomeStack.Screen name="Place" component={Place} />
             <HomeStack.Screen name="MovieScreen" component={MovieScreen} />
             <HomeStack.Screen name="Theatre" component={TheatreScreen} />
+            <HomeStack.Screen name="Food" component={Food} />
 
         </HomeStack.Navigator>
     )

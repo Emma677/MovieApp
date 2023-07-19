@@ -6,11 +6,12 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Calender from "../components/Calender";
 import moment from "moment";
 import { Distination } from "./Distination";
+import { client } from "../moviebooking/sanity";
 
 const MovieScreen = () => {
   const navigation = useNavigation();
@@ -18,9 +19,10 @@ const MovieScreen = () => {
   //the today variable was created to highlight the particular date of week with the yellow background
   const today = moment().format("YYYY-MM-DD");
   const [selectedDate, setSelectedDate] = useState(today);
-  const { selectedCity, setSelectedCity } = useContext(Distination);
+  const { selectedCity, setSelectedCity,locationId, } = useContext(Distination);
 
   const [mall, setMall] = useState([]);
+  const [reqData,setreqData] = useState([])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -698,52 +700,80 @@ const MovieScreen = () => {
       ],
     },
   ];
-
+  useEffect(()=>{
+   const fetchTheatres = async () =>{
+    const response = await client.fetch(
+      `*[_type == 'theatre' && location._ref == '${locationId}']{
+            ...,
+            'showtimes': *[_type == 'showtimes' && references(^._id) && references('movie','${route.params.movieId}')]{
+              _id,
+              time,
+              row,
+              'theatre': theatre-> name,
+              'movie': movie-> name,
+            }
+          }`
+    );
+    setreqData(response)
+   }
+   fetchTheatres();
+  },[])
+  console.log(locationId)
+  console.log(reqData)
   return (
     <View>
       <Calender selected={selectedDate} onSelected={setSelectedDate} />
 
-      {malls
-        .filter((item) => item.place === selectedCity)
-        .map((item) =>
-          item.galleria.map((multiplex, index) => (
-            <Pressable
-              onPress={() => setMall(multiplex.name)}
-              style={{ marginTop: 5 }}
-              key={index}
-            >
-              <Text style={{ fontSize: 15, fontWeight: "400", marginLeft: 3 }}>
-                {multiplex.name}
-              </Text>
-              {mall.includes(multiplex.name) ? (
-                <FlatList
-                  numColumns={3}
-                  data={multiplex.showtimes}
-                  renderItem={({ item }) => (
-                    <Pressable
-                      onPress={()=> navigation.navigate('Theatre',{
-                       name:route.params.title,
-                       selectedDate:selectedDate
-                      })}
-                      style={{
-                        flexDirection: "row",
-                        borderWidth: 1,
-                        borderColor: "green",
-                        width: 70,
-                        height: 20,
-                        marginHorizontal: 8,
-                        marginVertical: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text style={{fontSize:15,fontWeight:'500'}}>{item}</Text>
-                    </Pressable>
-                  )}
-                />
-              ) : null}
-            </Pressable>
-          ))
+{/* for the frontend or ui part we used the malls to map
+but now connecting the backend to it so we will use reqData instead
+
+*/}
+      {reqData
+        .map((item,index) =>
+        (
+          <Pressable
+          onPress={() => setMall(item.name)}
+          style={{ marginTop: 5 }}
+          key={index}
+
+        >
+          <Text style={{ fontSize: 15, fontWeight: "400", marginLeft: 3 }}>
+            {item.name}
+          </Text>
+          {mall.includes(item.name) ? (
+            <FlatList
+              numColumns={3}
+              data={item.showtimes}
+              renderItem={({ item,index }) => (
+                <Pressable
+                  onPress={()=> navigation.navigate('Theatre',{
+                   name:route.params.title,
+                   selectedDate:selectedDate,
+                   rows:item.row,
+                   docId:item._id,
+                   showtimeId:index
+                  })}
+                  style={{
+                    flexDirection: "row",
+                    borderWidth: 1,
+                    borderColor: "green",
+                    width: 70,
+                    height: 30,
+                    marginHorizontal: 8,
+                    marginVertical: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding:2
+                  }}
+                >
+                  <Text style={{fontSize:15,fontWeight:'500'}}>{item.time}</Text>
+                </Pressable>
+              )}
+            />
+          ) : null}
+        </Pressable>
+        )
+           
         )}
     </View>
   );
@@ -751,4 +781,46 @@ const MovieScreen = () => {
 
 export default MovieScreen;
 
-const styles = StyleSheet.create({});
+
+// {malls
+//   .filter((item) => item.place === selectedCity)
+//   .map((item) =>
+//     item.galleria.map((multiplex, index) => (
+//       <Pressable
+//         onPress={() => setMall(multiplex.name)}
+//         style={{ marginTop: 5 }}
+//         key={index}
+//       >
+//         <Text style={{ fontSize: 15, fontWeight: "400", marginLeft: 3 }}>
+//           {multiplex.name}
+//         </Text>
+//         {mall.includes(multiplex.name) ? (
+//           <FlatList
+//             numColumns={3}
+//             data={multiplex.showtimes}
+//             renderItem={({ item }) => (
+//               <Pressable
+//                 onPress={()=> navigation.navigate('Theatre',{
+//                  name:route.params.title,
+//                  selectedDate:selectedDate
+//                 })}
+//                 style={{
+//                   flexDirection: "row",
+//                   borderWidth: 1,
+//                   borderColor: "green",
+//                   width: 70,
+//                   height: 20,
+//                   marginHorizontal: 8,
+//                   marginVertical: 8,
+//                   alignItems: "center",
+//                   justifyContent: "center",
+//                 }}
+//               >
+  //               <Text style={{fontSize:15,fontWeight:'500'}}>{item}</Text>
+  //             </Pressable>
+  //           )}
+  //         />
+  //       ) : null}
+  //     </Pressable>
+  //   ))
+  // )}

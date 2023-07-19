@@ -1,5 +1,5 @@
 import { View, Text, Pressable, FlatList } from "react-native";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -13,8 +13,14 @@ import {
   ModalTitle,
   SlideAnimation,
 } from "react-native-modals";
+import 'url-search-params-polyfill'
+import { URL, URLSearchParams } from "react-native-url-polyfill";
+import { client } from "../moviebooking/sanity";
 
 const Home = () => {
+  global.URL = URL;
+  const params = new URLSearchParams;
+  params.set('foo','bar')
   const { selectedCity, setSelectedCity } = useContext(Distination);
   const data = [
     {
@@ -350,17 +356,31 @@ const Home = () => {
       vote_count: 1,
     },
   ];
-
-  const [sortedData,setSortedData]= useState(data)
+  const [sortedData,setSortedData]= useState([])
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedfilter, setSelectedFilter] = useState();
+  const [moviesData, setMoviesData] = useState([])
+
+  // const [sortedData,setSortedData]= useState(data)
+  // again in the ui we got our items by using the above useState but now we the same usestate but make it an empty array.
 
   // before using the selectedcity from the Distination.js file i use the route to pass param from the place to this home screen
   // const route = useRoute();
   // const {place} = route.params || {}
   // console.log("place", selectedCity);
 
-  
+
+  useEffect(()=>{
+    const fetchData = async () =>{
+      const result = await client.fetch(
+        `*[_type == 'movie']`
+      )
+      setMoviesData(result)
+      setSortedData(result)
+    }
+    fetchData()
+  },[])
+  console.log(moviesData)
   const languages = [
     {
       id: "0",
@@ -413,8 +433,6 @@ const Home = () => {
       language: "Drama",
     },
   ];
-
-
  
   const navigation = useNavigation();
   useLayoutEffect(() => {
